@@ -12,10 +12,20 @@
 */
 
 Route::get('/', function () {
-    return Redirect::route('api.index');
+//    return Redirect::route('api.index');
+    //重定向路由
+    return 'hello word';
+//    return Redirect::to('/home');
+//重定向命名路由
+//return Redirect::route('website.home');
+//重定向到控制器动作
+//return Redirect::action('homeController@home');
 });
-
+/*
+ * 微信公众号
+ */
 Route::group(['prefix'=>'api','namespace'=>'Api','as'=>'api.'],function (){
+    //首次接入
     Route::any('index','Wechat\WechatController@index')->name('index');
 
 });
