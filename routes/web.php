@@ -12,8 +12,11 @@
 */
 
 Route::get('/', function () {
-    return Redirect::route('dashboard');
+    return Redirect::route('api.index');
 });
 
-Route::any('index','Api\Wechat\WechatController@index')->name('dashboard');
+Route::group(['prefix'=>'api','namespace'=>'Api','as'=>'api.'],function (){
+    Route::any('index','Wechat\WechatController@index')->name('index');
+
+});
 
