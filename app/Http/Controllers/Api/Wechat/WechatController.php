@@ -4,10 +4,116 @@ namespace App\Http\Controllers\Api\Wechat;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Libs\Weixin\Weixin;
+use Cache;
+use DB;
 class WechatController extends Controller
 {
     const  TOKEN = 'weixin';
+
+    public function ceshi()
+    {
+//        $time=strtotime('1606287900');
+//        $time=date('Y-m-d h:i:s','1606287900');
+        $poor = new Weixin();
+//         return $time;
+        return $token = $poor->token;
+    }
+
+    /**
+     * 创建自定义菜单
+     * @param array $menu
+     * @return array|mixed
+     */
+    public function createMenu()
+    {
+        $menu = config('arr');
+//        dd($menu);
+        //数组转为json
+        $data = json_encode($menu, JSON_UNESCAPED_UNICODE);#256
+//        $token = Cache::store('database')->get('access_tokens', function () {
+//            return DB::table('cache')->get();
+//        });
+//
+//        dd($token);
+        //创建自定义菜单URl
+        $url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=' . (new Weixin())->token;
+        //发起请求
+        $json = $this->http_request($url, $data);
+        return $json;
+    }
+
+    /**
+     * 删除自定义菜单
+     * @return mixed
+     */
+    public function delMenu()
+    {
+        //
+        $url = 'https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=' . (new Weixin())->token;
+        //发起请求
+        $json = $this->http_request($url);
+        return $json;
+    }
+    //事件的处理t
+    private function eventFun($obj)
+    {
+        //事件的名称
+        $Event = $obj->Event;
+        switch ($Event) {
+            case 'CLICK':
+                //点击事件
+                return $this->clickFun($obj);
+                break;
+            case 'subscribe':
+                //点击关注
+                $EventKey = $obj->EventKey;
+                $EventKey = (string)$EventKey;
+                if (empty($EventKey)) {//则为顶级
+                    $sql = "insert into wx_user (wx_openid) values(?)";
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->execute([$obj->FromUserName]);
+                } else {
+                    $id = (int)str_replace('qrscene_', '', $EventKey);
+                    $sql = "select * from wx_user where id=$id";
+                    $row = $this->pdo->query($sql)->fetch();
+//                    var_dump($row);
+                    //添加本人的记录到数据库
+                    $sql = "insert into wx_user (wx_openid,level_1,level_2,level_3) values(?,?,?,?)";
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->execute([$obj->FromUserName, $row['wx_openid'], $row['level_1'], $row['level_2']]);
+
+                }
+                return $this->createText($obj, "这里有你想要的一切\n感谢您的关注");
+
+                break;
+            case 'LOCATION':
+                $wx_openid = $obj->FromUserName;
+                $Latitude = $obj->Latitude;//经度
+                $Longitude = $obj->Longitude;//维度
+                //修改表记录
+                $sql = "update wx_user set Latitude=?,Longitude=? where wx_openid=?";
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute([$Latitude, $Longitude, $wx_openid]);
+                break;
+        }
+    }
+
+    //处理点击事件
+    private function clickFun($obj)
+    {
+        $EventKey = $obj->EventKey;
+        switch ($EventKey) {
+            case'首页001':
+                return $this->createText($obj, '你点击首页按钮');
+                break;
+            case'客服001':
+                return $this->createText($obj, '你点击客服按钮');
+                break;
+            default:
+                return $this->createText($obj, '这个操作我不认识');
+        }
+    }
 
     public function index()
     {
@@ -105,7 +211,7 @@ class WechatController extends Controller
             $Longitude = 114.373451;//维度114.373451,30.582998
 
             $url = 'https://restapi.amap.com/v3/place/around?key=5324a49d809b2cc832d444c69554500b&location=' . $Longitude . ',' . $Latitude . '&radius=10000&types=010100&offset=20&page=1&extensions=all';
-            $urls='https://restapi.amap.com/v3/place/around?key=5324a49d809b2cc832d444c69554500b&location=114.373451,30.582998&keywords=&types=010100&radius=10000&offset=20&page=1&extensions=all';
+            $urls = 'https://restapi.amap.com/v3/place/around?key=5324a49d809b2cc832d444c69554500b&location=114.373451,30.582998&keywords=&types=010100&radius=10000&offset=20&page=1&extensions=all';
             $json = $this->http_request($urls);
 
             $json_arr = json_decode($json, true);
@@ -244,7 +350,7 @@ class WechatController extends Controller
     }
 
     //生成链接消息aa
-    private function createLink($obj,$title, $Description, $url)
+    private function createLink($obj, $title, $Description, $url)
     {
         $str = '<xml>
   <ToUserName><![CDATA[%s]]></ToUserName>
@@ -256,7 +362,7 @@ class WechatController extends Controller
   <Url><![CDATA[%s]]></Url>
   
 </xml>';
-        $str = sprintf($str, $obj->FromUserName, $obj->ToUserName, time(),$title, $Description, $url);
+        $str = sprintf($str, $obj->FromUserName, $obj->ToUserName, time(), $title, $Description, $url);
         return $str;
     }
 
@@ -264,10 +370,10 @@ class WechatController extends Controller
     private function linkFun($obj)
     {
         //要回复的内容
-        $title=$obj->Title;
+        $title = $obj->Title;
         $Description = $obj->Description;
         $url = $obj->Url;
-        return $this->createLink($obj,$title, $Description, $url);
+        return $this->createLink($obj, $title, $Description, $url);
     }
 
     /**
@@ -294,7 +400,7 @@ class WechatController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         //设置为post请求
-        if (!empty($res)){//如果$res不为空则
+        if (!empty($res)) {//如果$res不为空则
             //开启post请求
             curl_setopt($ch, CURLOPT_POST, 1);
             //post请求的数据

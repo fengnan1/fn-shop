@@ -24,9 +24,12 @@ Route::get('/', function () {
 /*
  * 微信公众号
  */
-Route::group(['prefix'=>'api','namespace'=>'Api','as'=>'api.'],function (){
+Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function () {
     //首次接入
-    Route::any('index','Wechat\WechatController@index')->name('index');
-
+    Route::any('index', 'Wechat\WechatController@index')->name('index');
+    //测试获取access_token
+    Route::any('ceshi', 'Wechat\WechatController@ceshi')->name('ceshi');
+    Route::any('createMenu', 'Wechat\WechatController@createMenu')->name('createMenu');
+    Route::any('delMenu', 'Wechat\WechatController@delMenu')->name('delMenu');
 });
 
