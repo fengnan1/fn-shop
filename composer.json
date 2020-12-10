@@ -6,7 +6,9 @@
     "type": "project",
     "require": {
         "php": ">=7.0.0",
+        "barryvdh/laravel-debugbar": "3.4.*",
         "fideloper/proxy": "~3.3",
+        "laravel-lang/lang": "~3.0",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0"
     },
