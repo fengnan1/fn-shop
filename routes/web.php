@@ -32,4 +32,10 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function
     Route::any('createMenu', 'Wechat\WechatController@createMenu')->name('createMenu');
     Route::any('delMenu', 'Wechat\WechatController@delMenu')->name('delMenu');
 });
+/*
+* 后台
+*/
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
+
+});
 
