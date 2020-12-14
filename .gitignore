@@ -1,7 +1,4 @@
-# "#"：表示注释
-# "!"：非
-# "/"：目录层级
-# "*"：通配符
+
 /node_modules
 /public/hot
 /public/storage
