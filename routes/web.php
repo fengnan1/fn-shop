@@ -38,4 +38,3 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
 
 });
-
