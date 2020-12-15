@@ -10,16 +10,17 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+//定义自己的路由文件 避免冲突
+//include  base_path('route/admin/admin.php');
 Route::get('/', function () {
-//    return Redirect::route('api.index');
+    return Redirect::route('admin.login');
     //重定向路由
-    return 'hello word';
+//    return 'hello word';
 //    return Redirect::to('/home');
 //重定向命名路由
 //return Redirect::route('website.home');
 //重定向到控制器动作
-//return Redirect::action('homeController@home');
+//return Redirect::action('Admin/ManagerController@login');
 });
 /*
  * 微信公众号
@@ -36,5 +37,6 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function
 * 后台
 */
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
+    Route::any('login', 'LoginController@login')->name('login');
 
 });
