@@ -37,6 +37,13 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function
 * 后台
 */
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
-    Route::any('login', 'LoginController@login')->name('login');
+    Route::match(['get', 'post'], 'login', 'LoginController@login')->name('login');
+    Route::group(['middleware'=>'CheckManager:login'],function (){
+        Route::get('logout', 'LoginController@logout')->name('logout');
+        Route::get('index', 'IndexController@index')->name('index');
+        Route::get('welcome', 'IndexController@welcome')->name('welcome');
+    });
+
+
 
 });
