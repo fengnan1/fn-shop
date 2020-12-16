@@ -49,6 +49,7 @@ class ManagerController extends BaseController
             'truename'=>['required'],
             'password_confirmation' => ['required', "regex:/^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/"],
             'password' => ['required','confirmed'],
+            //自定义验证规则
             'mobile'=>['required','phone'],
             'email'=>['required','email'],
         ]);
@@ -75,7 +76,7 @@ class ManagerController extends BaseController
      */
     public function show($id)
     {
-        //
+//        return view('admin.managers.show',['']);
     }
 
     /**
@@ -86,7 +87,9 @@ class ManagerController extends BaseController
      */
     public function edit($id)
     {
-        //
+//        dd($id);
+        $manager=Manager::find($id);
+        return view('admin.manager.create_edit',['managers'=>$manager]);
     }
 
     /**
@@ -98,7 +101,8 @@ class ManagerController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        //
+        dd($request->all());
+        dd($id);
     }
 
     /**
@@ -109,6 +113,6 @@ class ManagerController extends BaseController
      */
     public function destroy($id)
     {
-        //
+       dd($id);
     }
 }

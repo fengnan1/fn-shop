@@ -53,7 +53,11 @@
                     <tbody>
                     @foreach($data as $val)
                         <tr class="text-c va-m">
-                            <td><input name="" type="checkbox" value="{{$val['id']}}"></td>
+                            <td>
+                                @if(auth('admin')->id()!=$val['id'])
+                                <input name="" type="checkbox" value="{{$val['id']}}">
+                                 @endif
+                            </td>
                             <td>{{$val['id']}}</td>
                             <td class="text-l">{{$val['username']}}</td>
                             <td class="text-l">{{$val['truename']}}</td>
@@ -79,13 +83,15 @@
                                        class="label label-success radius">启用</a>
                                 @endif
                                 <a style="text-decoration:none" class="label label-primary  radius"
-                                   onClick="goods_show('查看产品','{{route('admin.goods.show',['goods'=>$val['id']])}}','{{$val['id']}}')" href="javascript:;"
+                                   onClick="managers_show('查看管理员','{{route('admin.managers.show',['managers'=>$val['id']])}}')" href="javascript:;"
                                    >查看</a>
                                 <a style="text-decoration:none" class="label label-warning  radius"
-                                   onClick="goods_edit('产品编辑','{{route('admin.goods.edit',['goods'=>$val['id']])}}','{{$val['id']}}')" href="javascript:;"
+                                   onClick="goods_edit('管理员编辑','{{route('admin.managers.edit',['managers'=>$val['id']])}}')" href="javascript:;"
                                    >修改</a>
-                                    <a style="text-decoration:none"  class="label label-danger  radius" onClick="goods_del(this,'{{route('admin.goods.destroy',['goods'=>$val['id']])}}','{{$val['id']}}')"
+                                    @if(auth('admin')->id()!=$val['id'])
+                                    <a style="text-decoration:none"  class="label label-danger  radius" onClick="managers_del(this,'{{route('admin.managers.destroy',['managers'=>$val['id']])}}')"
                                        href="javascript:;">删除</a>
+                                        @endif
                             </td>
 
                         </tr>
@@ -127,11 +133,11 @@
         }
 
         /*产品-查看*/
-        function goods_show(title, url,id) {
+        function managers_show(title, url) {
             var index = layer.open({
                 type: 2,
                 title: title,
-                content: url+'?id='+id,
+                content: url,
             });
             layer.full(index);
         }
@@ -212,7 +218,7 @@
         }
 
         /*产品-删除*/
-        function goods_del(obj, url,id) {
+        function managers_del(obj, url,id) {
             layer.confirm('确认要删除吗？', function (index) {
                 $.ajax({
                     type: 'DELETE',

@@ -10,9 +10,12 @@
         {{--表单验证提示--}}
         @include('admin.common.validate')
         @if($managers['id'])
-            <form action="{{route('admin.managers.update',['managers'=>$managers['id']])}}" method="PUT" enctype="multipart/form-data" class="form form-horizontal" >
+            <form action="{{route('admin.managers.update',['managers'=>$managers['id']])}}" enctype="multipart/form-data" class="form form-horizontal" >
+                {{ method_field('PUT') }}
+                {{--{{ method_field('post') }}--}}
                 @else
-                    <form action="{{route('admin.managers.store')}}" method="post" enctype="multipart/form-data" class="form form-horizontal" >
+                    <form action="{{route('admin.managers.store')}}"  enctype="multipart/form-data" class="form form-horizontal" >
+                        {{ method_field('post') }}
                         @endif
                         {{csrf_field()}}
                         <div class="row cl">
@@ -30,7 +33,7 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码:</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" value="{{$managers['password']}}" placeholder="输入密码" id="password" name="password">
+                                <input type="text" class="input-text" value="" placeholder="输入密码" id="password" name="password">
                             </div>
                         </div>
                         <div class="row cl">
@@ -123,7 +126,7 @@
                  mobile: {
                      required: true,
                      isMobiles: true,
-                     isMobile: true,
+                     // isMobile: true,
                  },
                 email:{
                     required: true,
@@ -141,7 +144,8 @@
             submitHandler: function (form) {
                 // $(form).submit();
                 $(form).ajaxSubmit({
-                    type: $('form').attr("method"),
+                    // type: $('form').attr("method"),
+                    type:$('input[name=_method]').val(),
                     url: $('form').attr("action"),
 
                     success: function (data) {
