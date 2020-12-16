@@ -42,6 +42,11 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::get('logout', 'LoginController@logout')->name('logout');
         Route::get('index', 'IndexController@index')->name('index');
         Route::get('welcome', 'IndexController@welcome')->name('welcome');
+
+//        Route::get('manager/index','ManagerController@index')->name('manager.index');//管理员列表
+        Route::resource('managers','ManagerController');
+
+        Route::resource('goods','GoodsController');
     });
 
 

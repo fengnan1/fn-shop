@@ -109,7 +109,7 @@ $(function(){
      // 手机号码验证    
     jQuery.validator.addMethod("isMobile", function(value, element) {    
       var length = value.length;    
-      return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-35-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));    
+      return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-35-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));
     }, "手机号码格式不正确。");
 
     // 电话号码验证    
@@ -139,7 +139,7 @@ $(function(){
     
     // 匹配密码，以字母开头，长度在6-16之间，只能包含字符、数字和下划线。      
     jQuery.validator.addMethod("isPwd", function(value, element) {       
-         return this.optional(element) || /^[a-zA-Z]\\w{6,16}$/.test(value);       
+         return this.optional(element) || /^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/.test(value)|| /^(?![A-Za-z]+$)(?![A-Z0-9]+$)(?![a-z0-9]+$)(?![a-z\W_!@#$%^&*`~()-+=]+$)(?![A-Z\W_!@#$%^&*`~()-+=+$)(?![0-9\W_!@#$%^&*`~()-+=]+$)[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{8,16}$/.test(value);
     }, "以字母开头，长度在6-12之间，只能包含字符、数字和下划线。");  
     
     // 身份证号码验证

@@ -115,6 +115,8 @@ return [
     'url'                  => ':attribute 格式不正确。',
     'uuid'                 => ':attribute 必须是有效的 UUID。',
 
+    'phone'                 => ':attribute 号码不合法。',
+    'truename'                 => ':attribute 不能为空。',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -173,5 +175,7 @@ return [
         'time'                  => '时间',
         'available'             => '可用的',
         'size'                  => '大小',
+
+        'truename'=>'真实姓名',
     ],
 ];
