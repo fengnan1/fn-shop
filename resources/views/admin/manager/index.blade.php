@@ -76,10 +76,10 @@
                             </td>
                             <td class="td-manage">
                                 @if($val['status']=='1')
-                                    <a style="text-decoration:none" onClick="goods_stop(this,'{{$val['id']}}')"
+                                    <a style="text-decoration:none" onClick="managers_stop(this,'{{route('admin.managers.stop',['managers'=>$val['id']])}}')"
                                        href="javascript:;" class="label label-danger radius" >停用</a>
                                 @else
-                                    <a style="text-decoration:none" onClick="goods_start(this,{{$val['id']}})" href="javascript:;"
+                                    <a style="text-decoration:none" onClick="managers_start(this,'{{route('admin.managers.start',['managers'=>$val['id']])}}')" href="javascript:;"
                                        class="label label-success radius">启用</a>
                                 @endif
                                 <a style="text-decoration:none" class="label label-primary  radius"
@@ -149,7 +149,7 @@
                     shade: false
                 },
                 function () {
-                    $(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="goods_start(this,id)" href="javascript:;" title="申请上线">申请上线</a>');
+                    $(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="managers_start(this,id)" href="javascript:;" title="申请上线">申请上线</a>');
                     $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已发布</span>');
                     $(obj).remove();
                     layer.msg('已发布', {icon: 6, time: 1000});
@@ -162,22 +162,24 @@
                 });
         }
 
-        /*产品-下架*/
-        function goods_stop(obj, id) {
-            layer.confirm('确认要下架吗？', function (index) {
+        /*管理员-停用*/
+        function managers_stop(obj, url) {
+
+            layer.confirm('确认要停用吗？', function (index) {
 
                 $.ajax({
                     type: 'POST',
-                    url: '',
+                    url: url,
+                    data:{_token:$('input[name=_token]').val()},
                     dataType: 'json',
                     success: function (data) {
-                        if (data == 1) {
-                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="goods_start(this,id)" href="javascript:;" title="发布"><i class="Hui-iconfont">&#xe603;</i></a>');
-                            $(obj).parents("tr").find(".td-status").html('<span class="label label-defaunt radius">已下架</span>');
+                        if (data.msg == 'Success') {
+                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,id)" href="javascript:;" class="label label-danger radius">启用</a>');
+                            $(obj).parents("tr").find(".td-status").html('<span class="label  label-danger radius">停用</span>');
                             $(obj).remove();
-                            layer.msg('已下架!', {icon: 5, time: 1000});
+                            layer.msg('已停用!', {icon: 5, time: 1000});
                         } else {
-                            layer.msg('下架失败!', {icon: 5, time: 1000});
+                            layer.msg(data.msg, {icon: 5, time: 1000});
                         }
 
                     },
@@ -189,13 +191,30 @@
             });
         }
 
-        /*产品-发布*/
-        function goods_start(obj, id) {
+        /*管理员-启用*/
+        function managers_start(obj, url) {
             layer.confirm('确认要发布吗？', function (index) {
-                $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="goods_stop(this,id)" href="javascript:;" title="下架"><i class="Hui-iconfont">&#xe6de;</i></a>');
-                $(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已发布</span>');
-                $(obj).remove();
-                layer.msg('已发布!', {icon: 6, time: 1000});
+
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data:{_token:$('input[name=_token]').val()},
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.msg == 'Success') {
+                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,id)" href="javascript:;" class="label label-danger radius">停用</a>');
+                            $(obj).parents("tr").find(".td-status").html(' <span class="label label-success radius">启用</span>');
+                            $(obj).remove();
+                            layer.msg('已启用!', {icon: 6, time: 1000});
+                        } else {
+                            layer.msg(data.msg, {icon: 5, time: 1000});
+                        }
+
+                    },
+                    error: function (data) {
+                        console.log(data.msg);
+                    },
+                });
             });
         }
 
@@ -218,12 +237,12 @@
         }
 
         /*产品-删除*/
-        function managers_del(obj, url,id) {
+        function managers_del(obj, url) {
             layer.confirm('确认要删除吗？', function (index) {
                 $.ajax({
                     type: 'DELETE',
                     url: url,
-                    data:{'id':id,_token:$('input[name=_token]').val()},
+                    data:{_token:$('input[name=_token]').val()},
                     dataType: 'json',
                     success: function (data) {
 

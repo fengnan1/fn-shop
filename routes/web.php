@@ -44,6 +44,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::get('welcome', 'IndexController@welcome')->name('welcome');
 
 //        Route::get('manager/index','ManagerController@index')->name('manager.index');//管理员列表
+        Route::post('managers/stop','ManagerController@stop')->name('managers.stop');
+        Route::post('managers/start','ManagerController@start')->name('managers.start');
         Route::resource('managers','ManagerController');
 
         Route::resource('goods','GoodsController');

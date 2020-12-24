@@ -93,6 +93,7 @@ class ManagerController extends BaseController
     }
 
     /**
+     * 修改管理员
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -106,6 +107,7 @@ class ManagerController extends BaseController
     }
 
     /**
+     * 删除管理员
      * Remove the specified resource from storage.
      *
      * @param  int  $id
@@ -115,4 +117,54 @@ class ManagerController extends BaseController
     {
        dd($id);
     }
+
+    /**
+     * 停用管理员
+     * @param Request $request
+     * @return array
+     */
+    public function stop(Request $request){
+        $id=$request->only('managers')['managers'];
+        if (auth('admin')->user()->id==$id){
+            return $this->error_msg('无法禁用自身');
+        }
+        if (is_numeric($id)){
+
+            $status=Manager::where('id',$id)->select('id','status')->first();
+
+           if ($status->status==1){
+               Manager::where('id',$id)->update(['status'=>2]);
+               return $this->success_msg();
+           }else{
+               return $this->error_msg('已经被禁用');
+           }
+        }else{
+        return $this->error_msg('参数必须是数字');
+        }
+
+
+
+
+    }
+
+    public function  start(Request $request){
+        $id=$request->only('managers')['managers'];
+//        if (auth('admin')->user()->id==$id){
+//            return $this->error_msg('无法禁用自身');
+//        }
+        if (is_numeric($id)){
+
+            $status=Manager::where('id',$id)->select('id','status')->first();
+
+            if ($status->status==2){
+                Manager::where('id',$id)->update(['status'=>1]);
+                return $this->success_msg();
+            }else{
+                return $this->error_msg('已经启用了');
+            }
+        }else{
+            return $this->error_msg('参数必须是数字');
+        }
+    }
+
 }
