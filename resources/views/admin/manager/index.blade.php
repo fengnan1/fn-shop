@@ -79,8 +79,7 @@
                                     <a style="text-decoration:none" onClick="managers_stop(this,'{{route('admin.managers.stop',['managers'=>$val['id']])}}')"
                                        href="javascript:;" class="label label-danger radius" >停用</a>
                                 @else
-                                    <a style="text-decoration:none" onClick="managers_start(this,'{{route('admin.managers.start',['managers'=>$val['id']])}}')" href="javascript:;"
-                                       class="label label-success radius">启用</a>
+                                    <a style="text-decoration:none" onClick="managers_start(this,'{{route('admin.managers.start',['managers'=>$val['id']])}}')" href="javascript:;" class="label label-success radius">启用</a>
                                 @endif
                                 <a style="text-decoration:none" class="label label-primary  radius"
                                    onClick="managers_show('查看管理员','{{route('admin.managers.show',['managers'=>$val['id']])}}')" href="javascript:;"
@@ -174,9 +173,9 @@
                     dataType: 'json',
                     success: function (data) {
                         if (data.msg == 'Success') {
-                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,id)" href="javascript:;" class="label label-danger radius">启用</a>');
-                            $(obj).parents("tr").find(".td-status").html('<span class="label  label-danger radius">停用</span>');
-                            $(obj).remove();
+                            {{--$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,\'{{route('admin.managers.start',['managers'=>$val['id']])}}\')" href="javascript:;" class="label label-success radius">启用</a>');--}}
+                            {{--$(obj).parents("tr").find(".td-status").html('<span class="label  label-danger radius">停用</span>');--}}
+                            {{--$(obj).remove();--}}window.location = window.location;
                             layer.msg('已停用!', {icon: 5, time: 1000});
                         } else {
                             layer.msg(data.msg, {icon: 5, time: 1000});
@@ -193,18 +192,19 @@
 
         /*管理员-启用*/
         function managers_start(obj, url) {
-            layer.confirm('确认要发布吗？', function (index) {
+            layer.confirm('确认要启用吗？', function (index) {
 
                 $.ajax({
-                    type: 'POST',
+                    type: 'PUT',
                     url: url,
                     data:{_token:$('input[name=_token]').val()},
                     dataType: 'json',
                     success: function (data) {
                         if (data.msg == 'Success') {
-                            $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,id)" href="javascript:;" class="label label-danger radius">停用</a>');
-                            $(obj).parents("tr").find(".td-status").html(' <span class="label label-success radius">启用</span>');
-                            $(obj).remove();
+                            // $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,)" href="javascript:;" class="label label-danger radius">停用</a>');
+                            // $(obj).parents("tr").find(".td-status").html(' <span class="label label-success radius">启用</span>');
+                            // $(obj).remove();
+                            window.location = window.location;
                             layer.msg('已启用!', {icon: 6, time: 1000});
                         } else {
                             layer.msg(data.msg, {icon: 5, time: 1000});

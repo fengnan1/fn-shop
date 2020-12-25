@@ -119,14 +119,14 @@ class ManagerController extends BaseController
     }
 
     /**
-     * 停用管理员
+     * 修改管理员状态
      * @param Request $request
      * @return array
      */
     public function stop(Request $request){
         $id=$request->only('managers')['managers'];
         if (auth('admin')->user()->id==$id){
-            return $this->error_msg('无法禁用自身');
+            return $this->error_msg('无法更改自身的状态');
         }
         if (is_numeric($id)){
 
@@ -136,6 +136,8 @@ class ManagerController extends BaseController
                Manager::where('id',$id)->update(['status'=>2]);
                return $this->success_msg();
            }else{
+//               Manager::where('id',$id)->update(['status'=>1]);
+//               return $this->success_msg();
                return $this->error_msg('已经被禁用');
            }
         }else{
@@ -155,7 +157,7 @@ class ManagerController extends BaseController
         if (is_numeric($id)){
 
             $status=Manager::where('id',$id)->select('id','status')->first();
-
+//dd($status);
             if ($status->status==2){
                 Manager::where('id',$id)->update(['status'=>1]);
                 return $this->success_msg();
