@@ -32,6 +32,9 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function
     Route::any('ceshi', 'Wechat\WechatController@ceshi')->name('ceshi');
     Route::any('createMenu', 'Wechat\WechatController@createMenu')->name('createMenu');
     Route::any('delMenu', 'Wechat\WechatController@delMenu')->name('delMenu');
+    Route::get('index', 'Wechat\MaterialController@index')->name('material.index');//素材列表
+    Route::any('upload', 'Wechat\MaterialController@upload')->name('material.upload');//上传素材
+
 });
 /*
 * 后台
@@ -49,6 +52,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::resource('managers','ManagerController');
 
         Route::resource('goods','GoodsController');
+
+
     });
 
 

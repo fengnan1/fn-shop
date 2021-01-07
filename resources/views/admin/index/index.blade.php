@@ -132,6 +132,18 @@
                     </ul>
                 </dd>
             </dl>
+            <dl id="menu-gongzhong">
+                <dt><i class="Hui-iconfont">&#xe62d;</i> 公众号管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
+                </dt>
+                <dd>
+                    <ul>
+                        <li><a data-href="{{route('api.material.index')}}" data-title="素材管理" href="javascript:void(0)">素材管理</a></li>
+                        <li><a data-href="/admin/auth/index" data-title="权限管理" href="javascript:void(0)">权限管理</a>
+                        </li>
+                        <li><a data-href="{{route('admin.managers.index')}}" data-title="管理员列表" href="javascript:void(0)">管理员列表</a></li>
+                    </ul>
+                </dd>
+            </dl>
             <dl id="menu-tongji">
                 <dt><i class="Hui-iconfont">&#xe61a;</i> 系统统计<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i>
                 </dt>
