@@ -47,8 +47,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::get('welcome', 'IndexController@welcome')->name('welcome');
 
 //        Route::get('manager/index','ManagerController@index')->name('manager.index');//管理员列表
-        Route::post('managers/stop','ManagerController@stop')->name('managers.stop');
-        Route::put('managers/start','ManagerController@start')->name('managers.start');
+        Route::put('managers/edit_status','ManagerController@edit_status')->name('managers.edit_status');
+        Route::post('managers/restores/{id}','ManagerController@restores')->name('managers.restores');
+        Route::delete('managers/patch_delete','ManagerController@patch_delete')->name('managers.patch_delete');
         Route::resource('managers','ManagerController');
 
         Route::resource('goods','GoodsController');

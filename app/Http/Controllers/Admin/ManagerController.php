@@ -10,17 +10,16 @@ class ManagerController extends BaseController
 {
 
 
-/**
-* Display a listing of the resource.
-*
-* @return \Illuminate\Http\Response
-*/
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $data=Manager::paginate(1000);
+        $data = Manager::orderBy('id', 'asc')->withTrashed()->paginate($this->pagesize);
 
-//        $this->pagesize
-        return view('admin.manager.index',['data'=>$data]);
+        return view('admin.manager.index', ['data' => $data]);
     }
 
     /**
@@ -32,38 +31,38 @@ class ManagerController extends BaseController
     {
 
 
-       return view('admin.manager.create_edit',['managers'=>(new Manager())]);
+        return view('admin.manager.create_edit', ['managers' => (new Manager())]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
 //dd($request->except(['_token']));
-        $validator=Validator::make($request->except(['_token']), [
+        $validator = Validator::make($request->except(['_token']), [
             'username' => ["required", "unique:managers", "regex:/^[a-z-A-Z-0-9_]\w{6,18}$/i"],
-            'truename'=>['required'],
+            'truename' => ['required'],
             'password_confirmation' => ['required', "regex:/^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/"],
-            'password' => ['required','confirmed'],
+            'password' => ['required', 'confirmed'],
             //自定义验证规则
-            'mobile'=>['required','phone'],
-            'email'=>['required','email'],
+            'mobile' => ['required', 'phone'],
+            'email' => ['required', 'email'],
         ]);
 //        dd($validator->errors()->first());
         if ($validator->fails()) {
             return $this->error_msg($validator->errors()->first());
         }
-        $data=$request->except(['_token','password_confirmation']);
-        $data['password']=bcrypt($data['password']);
+        $data = $request->except(['_token', 'password_confirmation']);
+        $data['password'] = bcrypt($data['password']);
 //        dd($data);
-        $result=Manager::create($data);
-        if ($result){
+        $result = Manager::create($data);
+        if ($result) {
             return $this->success_msg('Success', $result);
-        }else{
+        } else {
             return $this->error_msg('已经创建或者用户已存在');
         }
     }
@@ -71,33 +70,33 @@ class ManagerController extends BaseController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-//        return view('admin.managers.show',['']);
+        return view('admin.manager.show');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
 //        dd($id);
-        $manager=Manager::find($id);
-        return view('admin.manager.create_edit',['managers'=>$manager]);
+        $manager = Manager::find($id);
+        return view('admin.manager.create_edit', ['managers' => $manager]);
     }
 
     /**
      * 修改管理员
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -110,12 +109,49 @@ class ManagerController extends BaseController
      * 删除管理员
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-       dd($id);
+
+        Manager::find($id)->delete();
+//        Manager::find($id)->forceDelete();
+
+        return $this->success_msg();
+
+    }
+
+    /**
+     * 恢复管理员
+     * Remove the specified resource from storage.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function restores($id)
+    {
+
+
+        Manager::onlyTrashed()->where('id', $id)->restore();
+
+        return $this->success_msg();
+
+    }
+
+    /**
+     * 全选删除
+      * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function patch_delete(Request $request)
+    {
+        $ids=$request->get('ids');
+//dd($ids);
+        Manager::destroy($ids);
+
+        return $this->success_msg();
+
     }
 
     /**
@@ -123,48 +159,27 @@ class ManagerController extends BaseController
      * @param Request $request
      * @return array
      */
-    public function stop(Request $request){
-        $id=$request->only('managers')['managers'];
-        if (auth('admin')->user()->id==$id){
-            return $this->error_msg('无法更改自身的状态');
-        }
-        if (is_numeric($id)){
 
-            $status=Manager::where('id',$id)->select('id','status')->first();
-
-           if ($status->status==1){
-               Manager::where('id',$id)->update(['status'=>2]);
-               return $this->success_msg();
-           }else{
-//               Manager::where('id',$id)->update(['status'=>1]);
-//               return $this->success_msg();
-               return $this->error_msg('已经被禁用');
-           }
-        }else{
-        return $this->error_msg('参数必须是数字');
+    public function edit_status(Request $request)
+    {
+        $id = $request->only('managers')['managers'];
+        if (auth('admin')->user()->id == $id) {
+            return $this->error_msg('无法改变用户自身状态');
         }
 
+        if (is_numeric($id)) {
+            $status = Manager::where('id', $id)->select('id', 'status')->first();
 
-
-
-    }
-
-    public function  start(Request $request){
-        $id=$request->only('managers')['managers'];
-//        if (auth('admin')->user()->id==$id){
-//            return $this->error_msg('无法禁用自身');
-//        }
-        if (is_numeric($id)){
-
-            $status=Manager::where('id',$id)->select('id','status')->first();
-//dd($status);
-            if ($status->status==2){
-                Manager::where('id',$id)->update(['status'=>1]);
+            if ($status->status == 1) {
+                Manager::where('id', $id)->update(['status' => 2]);
                 return $this->success_msg();
-            }else{
-                return $this->error_msg('已经启用了');
+            } else {
+                Manager::where('id', $id)->update(['status' => 1]);
+                return $this->success_msg();
+//                return $this->error_msg('已经被禁用');
             }
-        }else{
+
+        } else {
             return $this->error_msg('参数必须是数字');
         }
     }

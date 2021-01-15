@@ -2,5 +2,5 @@
 
 
 return [
-    'pagesize'=>10,
+    'pagesize'=>1000,
 ];
