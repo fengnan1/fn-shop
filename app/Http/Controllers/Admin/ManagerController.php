@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Manager;
 use Illuminate\Http\Request;
 use Validator;
-
+use Mail;
+use Illuminate\Mail\Message;
+use Hash;
 class ManagerController extends BaseController
 {
 
@@ -60,6 +62,14 @@ class ManagerController extends BaseController
         $data['password'] = bcrypt($data['password']);
 //        dd($data);
         $result = Manager::create($data);
+
+        Mail::send('mail.adduser', ['data' => $result], function (Message $messages) use ($result) {
+
+            $messages->to($result->email);
+
+            $messages->subject('账号已开通,请激活再使用');
+
+        });
         if ($result) {
             return $this->success_msg('Success', $result);
         } else {
@@ -101,8 +111,36 @@ class ManagerController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        dd($request->all());
-        dd($id);
+        $data = $request->except(['_token', '_method']);
+        //当前用户
+        $managers=Manager::find($id);
+        //验证密码是否一致
+        $bool=Hash::check($managers->password,$data['password']);
+//        auth('admin')->user()->id == $id
+        //验证提交的数据
+        $validator = Validator::make($data, [
+//            'truename' => ['required'],
+            'password_confirmation' => ['required', "regex:/^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/"],
+            'password' => ['required', 'confirmed'],
+            //自定义验证规则
+            'mobile' => ['required', 'phone', "unique:managers"],
+            'email' => ['required', 'email'],
+        ]);
+//        dd($validator->errors()->first());
+        if ($validator->fails()) {
+            return $this->error_msg($validator->errors()->first());
+        }
+
+
+
+        $result = Manager::where('id', $id)->update([
+            'email' => $data['email'],
+            'truename' => $data['truename'],
+            'password' => bcrypt($data['password']),
+            'gender' => $data['gender'],
+            'mobile'=> $data['mobile']
+        ]);
+        return $this->success_msg();
     }
 
     /**
@@ -141,12 +179,12 @@ class ManagerController extends BaseController
 
     /**
      * 全选删除
-      * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function patch_delete(Request $request)
     {
-        $ids=$request->get('ids');
+        $ids = $request->get('ids');
 //dd($ids);
         Manager::destroy($ids);
 
@@ -156,13 +194,13 @@ class ManagerController extends BaseController
 
     /**
      * 修改管理员状态
-     * @param Request $request
+     * * @param  int $id
      * @return array
      */
 
-    public function edit_status(Request $request)
+    public function edit_status($id)
     {
-        $id = $request->only('managers')['managers'];
+
         if (auth('admin')->user()->id == $id) {
             return $this->error_msg('无法改变用户自身状态');
         }

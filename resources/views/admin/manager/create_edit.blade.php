@@ -10,7 +10,7 @@
         {{--表单验证提示--}}
         @include('admin.common.validate')
         @if($managers['id'])
-            <form action="{{route('admin.managers.update',['managers'=>$managers['id']])}}" enctype="multipart/form-data" class="form form-horizontal" >
+            <form action="{{route('admin.managers.update',['managers'=>$managers['id']])}}"  class="form form-horizontal" >
                 {{ method_field('PUT') }}
                 {{--{{ method_field('post') }}--}}
                 @else
@@ -21,7 +21,7 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>用户名:</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" value="{{$managers['username']}}" autocomplete="off" placeholder="输入用户名" id="username" name="username">
+                                <input type="text" class="input-text" value="{{$managers['username']}}"  {{$managers['id']?'disabled':''}} autocomplete="off" placeholder="输入用户名" id="username" name="username">
                             </div>
                         </div>
                         <div class="row cl">
@@ -33,13 +33,13 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>密码:</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" value="" placeholder="输入密码" id="password" name="password">
+                                <input type="password" class="input-text" value="" placeholder="输入密码" id="password" name="password">
                             </div>
                         </div>
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>确认密码:</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" value="" placeholder="输入确认密码"  name="password_confirmation">
+                                <input type="password" class="input-text" value="" placeholder="输入确认密码"  name="password_confirmation">
                             </div>
                         </div>
                         <div class="row cl">
@@ -151,7 +151,7 @@
                     success: function (data) {
 
                         if (data.msg == 'Success') {
-                            layer.msg('添加成功!', {icon: 1, time: 2000}, function () {
+                            layer.msg('{{$managers['id']?'修改管理员':'添加管理员'}}成功!', {icon: 1, time: 2000}, function () {
                                 var index = parent.layer.getFrameIndex(window.name);
                                 // parent.$('.btn-refresh').click();
                                 parent.window.location = parent.window.location;

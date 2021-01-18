@@ -41,22 +41,47 @@ Route::group(['prefix' => 'api', 'namespace' => 'Api', 'as' => 'api.'], function
 */
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], function () {
     Route::match(['get', 'post'], 'login', 'LoginController@login')->name('login');
-    Route::group(['middleware'=>'CheckManager:login'],function (){
+    Route::group(['middleware' => 'CheckManager:login'], function () {
         Route::get('logout', 'LoginController@logout')->name('logout');
         Route::get('index', 'IndexController@index')->name('index');
         Route::get('welcome', 'IndexController@welcome')->name('welcome');
 
-//        Route::get('manager/index','ManagerController@index')->name('manager.index');//管理员列表
-        Route::put('managers/edit_status','ManagerController@edit_status')->name('managers.edit_status');
-        Route::post('managers/restores/{id}','ManagerController@restores')->name('managers.restores');
-        Route::delete('managers/patch_delete','ManagerController@patch_delete')->name('managers.patch_delete');
-        Route::resource('managers','ManagerController');
+        route::get('sendmail', function () {
+            //发送文本邮件
+//        \Mail::raw('测试一下发邮件',function (\Illuminate\Mail\Message $messages){
+//            //获取回调方法中的形参
+////            dd(func_get_args());
+//            $messages->to('811264657@qq.com');
+//
+//            $messages->subject('测试一下发邮件');
 
-        Route::resource('goods','GoodsController');
+//        });
+//            发送文本邮件
+            \Mail::send('mail.adduser',['data'=>['username'=>'张三','email'=>'811264657@qq.com']], function (\Illuminate\Mail\Message $messages) {
+                //获取回调方法中的形参
+//            dd(func_get_args());
+                $messages->to('811264657@qq.com');
+
+                $messages->subject('测试一下发邮件');
+
+            });
+
+
+        })->name('sendmail');
+
+        //管理员用户状态
+        Route::put('managers/edit_status/{id}', 'ManagerController@edit_status')->name('managers.edit_status');
+        //恢复删除
+        Route::post('managers/restores/{id}', 'ManagerController@restores')->name('managers.restores');
+        //全选删除
+        Route::delete('managers/patch_delete', 'ManagerController@patch_delete')->name('managers.patch_delete');
+        //管理员资源
+        Route::resource('managers', 'ManagerController');
+        //商品资源
+        Route::resource('goods', 'GoodsController');
 
 
     });
-
 
 
 });
