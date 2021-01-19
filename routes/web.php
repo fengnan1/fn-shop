@@ -77,6 +77,13 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::delete('managers/patch_delete', 'ManagerController@patch_delete')->name('managers.patch_delete');
         //管理员资源
         Route::resource('managers', 'ManagerController');
+
+        //角色资源
+        Route::resource('roles', 'RoleController');
+
+        //权限资源
+        Route::resource('nodes', 'NodeController');
+
         //商品资源
         Route::resource('goods', 'GoodsController');
 

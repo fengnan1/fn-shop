@@ -125,8 +125,8 @@
                 </dt>
                 <dd>
                     <ul>
-                        <li><a data-href="/admin/role/index" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
-                        <li><a data-href="/admin/auth/index" data-title="权限管理" href="javascript:void(0)">权限管理</a>
+                        <li><a data-href="{{route('admin.roles.index')}}" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
+                        <li><a data-href="{{route('admin.nodes.index')}}" data-title="权限管理" href="javascript:void(0)">权限管理</a>
                         </li>
                         <li><a data-href="{{route('admin.managers.index')}}" data-title="管理员列表" href="javascript:void(0)">管理员列表</a></li>
                     </ul>

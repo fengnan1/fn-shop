@@ -22,8 +22,8 @@ class CreateManagersTable extends Migration
             $table->enum('gender',[1,2,3])->comment('性别 1:男2:女3:保密');
             $table->string('mobile',15)->comment('手机号');
             $table->string('email',40)->comment('邮箱');
-            $table->tinyInteger('role_id')->comment('角色id');
-//            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+            $table->unsignedInteger('role_id')->comment('角色id');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->enum('status',[1,2])->comment('账号状态 1:启用2:禁用');
             $table->tinyInteger('sort')->default(50)->comment('排序');
             $table->rememberToken();
