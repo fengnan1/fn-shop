@@ -2,9 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
-class Role extends Model
+class Role extends Base
 {
-    //
+
+    //可以赋值的字段
+    protected $fillable = ['role_name'];
+
+    //时间字段自动完成
+    public $timestamps = false;
+
 }

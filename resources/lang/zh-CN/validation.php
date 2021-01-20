@@ -177,5 +177,6 @@ return [
         'size'                  => '大小',
 
         'truename'=>'真实姓名',
+        'role_name'=>'角色名称'
     ],
 ];

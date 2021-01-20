@@ -10,22 +10,33 @@ class NodeController extends BaseController
 {
     /**
      * Display a listing of the resource.
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-       return view('admin.node.index');
+        $params = $request->get('node_name', '');
+
+
+        $data = Node::when($params, function ($query) use ($params) {
+
+            $query->where('node_name', 'like', "%{$params}%");
+        })->paginate($this->pagesize);
+
+
+        return view('admin.node.index', compact('data', 'params'));
+
+
     }
 
     /**
      * Show the form for creating a new resource.
-     *
+     * @param  \App\Models\Node  $node
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Node $node)
     {
-        //
+        return view('admin.node.create_edit',compact('node'));
     }
 
     /**

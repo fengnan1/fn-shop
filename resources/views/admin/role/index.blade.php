@@ -14,9 +14,11 @@
                     class="Hui-iconfont">&#xe68f;</i></a></nav>
     <div class="page-container">
         <div class="text-c">
-            <input type="text" name="" id="" placeholder=" 角色" style="width:250px" class="input-text">
+            <form action="">
+            <input type="text" name="role_name" value="{{$params}}" id="" placeholder=" 请输入角色名称" style="width:250px" class="input-text">
             <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜角色
             </button>
+            </form>
         </div>
         <div class="cl pd-5 bg-1 bk-gray"><span class="l"><a class="btn btn-primary radius" id="add" href="javascript:;"
                                                              data-url="{{route('admin.roles.create')}}"
@@ -46,19 +48,26 @@
                     {{--<td>@foreach($val->auth as $v) {{$v->auth_name}} @endforeach</td>--}}
                     {{--<td>@foreach($val->auth as $v) {{$v->controller_name}} {{$v->action_name}}@endforeach</td>--}}
                     <td class="f-14">
-                        <a title="分派权限" href="javascript:;"
-                           onclick="admin_role_assign('分派权限','{{url('admin/role/assign')}}','')"
-                           style="text-decoration:none">
-                            <i class="Hui-iconfont">&#xe603;</i>
+                        <a class=" label label-success radius show"  href="javascript:;"
+                           data-url="{{route('admin.roles.show',['roles'=>$val['id']])}}"
+                           data-title="查看权限"
+                           {{--data-type="full"--}}
+                           style="text-decoration:none">点击查看
                         </a>
-                        <a title="编辑" href="javascript:;"
-                           onclick="admin_role_edit('角色编辑','/admin/role/edit','{{$val->id}}')"
-                           style="text-decoration:none">
-                            <i class="Hui-iconfont">&#xe6df;</i>
+                    </td>
+                    <td>
+                        <a class=" btn btn-warning radius edit"  href="javascript:;"
+                           data-url="{{route('admin.roles.edit',['roles'=>$val['id']])}}"
+                           data-title="修改角色"
+                           {{--data-type="full"--}}
+                           style="text-decoration:none">修改
                         </a>
-                        <a title="删除" href="javascript:;" onclick="admin_role_del(this,'1')" class="ml-5"
-                           style="text-decoration:none">
-                            <i class="Hui-iconfont">&#xe6e2;</i>
+{{csrf_field()}}
+                        <a class=" btn btn-danger radius delete"  href="javascript:;"
+                           data-url="{{route('admin.roles.destroy',['roles'=>$val['id']])}}"
+                           data-title="删除角色"
+                           {{--data-type="full"--}}
+                           style="text-decoration:none">删除
                         </a>
                     </td>
                 </tr>
