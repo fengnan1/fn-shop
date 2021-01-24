@@ -177,6 +177,7 @@ return [
         'size'                  => '大小',
 
         'truename'=>'真实姓名',
-        'role_name'=>'角色名称'
+        'role_name'=>'角色名称',
+         'node_name'=>'权限名称'
     ],
 ];

@@ -15,8 +15,8 @@
     <div class="page-container">
         <div class="text-c">
             <form action="">
-            <input type="text" name="role_name" value="{{$params}}" id="" placeholder=" 请输入角色名称" style="width:250px" class="input-text">
-            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜角色
+            <input type="text" name="role_name" value="{{$params}}"  placeholder=" 请输入角色名称" style="width:250px" class="input-text">
+            <button name=""  class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜角色
             </button>
             </form>
         </div>

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Node;
 use Illuminate\Http\Request;
-
+use Validator;
 
 class NodeController extends BaseController
 {
@@ -36,7 +36,8 @@ class NodeController extends BaseController
      */
     public function create(Node $node)
     {
-        return view('admin.node.create_edit',compact('node'));
+        $parents=Node::get();
+        return view('admin.node.create_edit',compact('node','parents'));
     }
 
     /**
@@ -69,7 +70,9 @@ class NodeController extends BaseController
      */
     public function edit(Node $node)
     {
-        //
+        $parents=Node::get();
+
+       return view('admin.node.create_edit',compact('node','parents'));
     }
 
     /**
@@ -81,7 +84,28 @@ class NodeController extends BaseController
      */
     public function update(Request $request, Node $node)
     {
-        //
+        $data=$request->except(['_token','_method']);
+
+        $validator = Validator::make($data, [
+            'node_name' => ["required", "unique:nodes,node_name,$node->id,id"],
+//            'icon' => ["regex:/^[$]|^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/"],
+            'pid' => ["required",'integer'],
+            'is_menu' => ["required",'integer'],
+        ]);
+
+
+        if ($validator->fails()) {
+            return $this->error_msg($validator->errors()->first());
+        }
+
+
+        $result=$node->update($data);
+        if($result){
+            return   $this->success_msg();
+        }else{
+            return  $this->error_msg('更新失败');
+        }
+
     }
 
     /**
@@ -92,6 +116,11 @@ class NodeController extends BaseController
      */
     public function destroy(Node $node)
     {
-        //
+        $result=$node->delete();
+//        Node::onlyTrashed()->where('id',1)->restore();
+        $node->onlyTrashed()->restore();
+//        Node::find($id)->forceDelete();
+
+        return $this->success_msg();
     }
 }
