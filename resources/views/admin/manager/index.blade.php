@@ -42,23 +42,24 @@
                     <thead>
                     <tr class="text-c">
                         <th width="3%"><input type="checkbox" name="id[]" value=""></th>
-                        <th width="5%">ID</th>
-                        <th width="8%">用户名</th>
-                        <th width="10%">真实姓名</th>
+                        <th width="4%">ID</th>
+                        <th width="6%">用户名</th>
+                        <th width="7%">真实姓名</th>
+                        <th width="7%">角色名称</th>
                         <th width="5%">性别</th>
                         <th width="8%">手机号</th>
-                        <th width="">邮箱</th>
-                        <th width="7%">邮箱是否验证</th>
+                        <th width="15%">邮箱</th>
+                        <th width="8%">邮箱是否验证</th>
                         <th width="5%">排序</th>
-                        <th width="">创建时间</th>
-                        <th width="5%">账号状态</th>
-                        <th width="">操作</th>
+                        <th>创建时间</th>
+                        <th width="6%">账号状态</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach($data as $val)
                         <tr class="text-c va-m">
-                            <td >
+                            <td>
                                 @if(auth('admin')->id()!=$val['id']&&$val['deleted_at']==null)
                                     <input class="row_check" name="id" type="checkbox" value="{{$val['id']}}">
                                 @endif
@@ -67,6 +68,7 @@
                             <td>{{$val['id']}}</td>
                             <td class="text-l">{{$val['username']}}</td>
                             <td class="text-l">{{$val['truename']}}</td>
+                            <td class="text-l">{{$val->role->role_name}}</td>
                             <td class="text-l">{{$val['gender']}}</td>
                             <td>{{$val['mobile']}}</td>
                             <td>{{$val['email']}}</td>
@@ -95,7 +97,8 @@
                                         @else
                                             <a style="text-decoration:none"
                                                data-url="{{route('admin.managers.edit_status',['managers'=>$val['id']])}}"
-                                               href="javascript:;" class="label label-success radius  edit_status">启用</a>
+                                               href="javascript:;"
+                                               class="label label-success radius  edit_status">启用</a>
                                         @endif
                                         <a style="text-decoration:none" class="label label-primary  radius show"
                                            data-url="{{route('admin.managers.show',['managers'=>$val['id']])}}"
@@ -132,152 +135,13 @@
     <script type="text/javascript" src="/js/curd.js"></script>
     <script type="text/javascript">
 
-        $('.table-sort').dataTable({
+        window.onload = $('.table-sort').dataTable({
             "aaSorting": [[1, "desc"]],//默认第几个排序
             "bStateSave": true,//状态保存
             "aoColumnDefs": [
                 {"orderable": false, "aTargets": [0, 7]}// 制定列不参与排序
             ]
         });
-
-        {{--/*产品-添加*/--}}
-        {{--function goods_add(title, url) {--}}
-        {{--var index = layer.open({--}}
-        {{--type: 2,--}}
-        {{--title: title,--}}
-        {{--content: url--}}
-        {{--});--}}
-        {{--layer.full(index);--}}
-        {{--}--}}
-
-        {{--/*产品-查看*/--}}
-        {{--function managers_show(title, url) {--}}
-        {{--var index = layer.open({--}}
-        {{--type: 2,--}}
-        {{--title: title,--}}
-        {{--content: url,--}}
-        {{--});--}}
-        {{--layer.full(index);--}}
-        {{--}--}}
-
-        {{--/*产品-审核*/--}}
-        {{--function goods_shenhe(obj, id) {--}}
-        {{--layer.confirm('审核文章？', {--}}
-        {{--btn: ['通过', '不通过'],--}}
-        {{--shade: false--}}
-        {{--},--}}
-        {{--function () {--}}
-        {{--$(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="managers_start(this,id)" href="javascript:;" title="申请上线">申请上线</a>');--}}
-        {{--$(obj).parents("tr").find(".td-status").html('<span class="label label-success radius">已发布</span>');--}}
-        {{--$(obj).remove();--}}
-        {{--layer.msg('已发布', {icon: 6, time: 1000});--}}
-        {{--},--}}
-        {{--function () {--}}
-        {{--$(obj).parents("tr").find(".td-manage").prepend('<a class="c-primary" onClick="goods_shenqing(this,id)" href="javascript:;" title="申请上线">申请上线</a>');--}}
-        {{--$(obj).parents("tr").find(".td-status").html('<span class="label label-danger radius">未通过</span>');--}}
-        {{--$(obj).remove();--}}
-        {{--layer.msg('未通过', {icon: 5, time: 1000});--}}
-        {{--});--}}
-        {{--}--}}
-
-        {{--/*管理员-停用*/--}}
-        {{--function managers_stop(obj, url) {--}}
-
-        {{--layer.confirm('确认要停用吗？', function (index) {--}}
-
-        {{--$.ajax({--}}
-        {{--type: 'POST',--}}
-        {{--url: url,--}}
-        {{--data:{_token:$('input[name=_token]').val()},--}}
-        {{--dataType: 'json',--}}
-        {{--success: function (data) {--}}
-        {{--if (data.msg == 'Success') {--}}
-        {{--$(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,\'{{route('admin.managers.start',['managers'=>$val['id']])}}\')" href="javascript:;" class="label label-success radius">启用</a>');--}}
-        {{--$(obj).parents("tr").find(".td-status").html('<span class="label  label-danger radius">停用</span>');--}}
-        {{--$(obj).remove();--}}{{--window.location = window.location;--}}
-        {{--layer.msg('已停用!', {icon: 5, time: 1000});--}}
-        {{--} else {--}}
-        {{--layer.msg(data.msg, {icon: 5, time: 1000});--}}
-        {{--}--}}
-
-        {{--},--}}
-        {{--error: function (data) {--}}
-        {{--console.log(data.msg);--}}
-        {{--},--}}
-        {{--});--}}
-
-        {{--});--}}
-        {{--}--}}
-
-        {{--/*管理员-启用*/--}}
-        {{--function managers_start(obj, url) {--}}
-        {{--layer.confirm('确认要启用吗？', function (index) {--}}
-
-        {{--$.ajax({--}}
-        {{--type: 'PUT',--}}
-        {{--url: url,--}}
-        {{--data:{_token:$('input[name=_token]').val()},--}}
-        {{--dataType: 'json',--}}
-        {{--success: function (data) {--}}
-        {{--if (data.msg == 'Success') {--}}
-        {{--// $(obj).parents("tr").find(".td-manage").prepend('<a style="text-decoration:none" onClick="managers_start(this,)" href="javascript:;" class="label label-danger radius">停用</a>');--}}
-        {{--// $(obj).parents("tr").find(".td-status").html(' <span class="label label-success radius">启用</span>');--}}
-        {{--// $(obj).remove();--}}
-        {{--window.location = window.location;--}}
-        {{--layer.msg('已启用!', {icon: 6, time: 1000});--}}
-        {{--} else {--}}
-        {{--layer.msg(data.msg, {icon: 5, time: 1000});--}}
-        {{--}--}}
-
-        {{--},--}}
-        {{--error: function (data) {--}}
-        {{--console.log(data.msg);--}}
-        {{--},--}}
-        {{--});--}}
-        {{--});--}}
-        {{--}--}}
-
-        {{--/*产品-申请上线*/--}}
-        {{--function goods_shenqing(obj, id) {--}}
-        {{--$(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">待审核</span>');--}}
-        {{--$(obj).parents("tr").find(".td-manage").html("");--}}
-        {{--layer.msg('已提交申请，耐心等待审核!', {icon: 1, time: 2000});--}}
-        {{--}--}}
-
-        {{--/*产品-编辑*/--}}
-        {{--function goods_edit(title, url,id) {--}}
-        {{--var index = layer.open({--}}
-        {{--type: 2,--}}
-        {{--title: title,--}}
-        {{--content: url+'?id='+id,--}}
-
-        {{--});--}}
-        {{--layer.full(index);--}}
-        {{--}--}}
-
-        {{--/*产品-删除*/--}}
-        {{--function managers_del(obj, url) {--}}
-        {{--layer.confirm('确认要删除吗？', function (index) {--}}
-        {{--$.ajax({--}}
-        {{--type: 'DELETE',--}}
-        {{--url: url,--}}
-        {{--data:{_token:$('input[name=_token]').val()},--}}
-        {{--dataType: 'json',--}}
-        {{--success: function (data) {--}}
-
-        {{--if (data.msg=='Success'){--}}
-        {{--$(obj).parents("tr").remove();--}}
-        {{--layer.msg('已删除!', {icon: 1, time: 1000});--}}
-        {{--}else{--}}
-        {{--layer.msg(data.msg, {icon: 2, time: 2000});--}}
-        {{--}--}}
-        {{--},--}}
-        {{--error: function (data) {--}}
-        {{--console.log(data.msg);--}}
-        {{--},--}}
-        {{--});--}}
-        {{--});--}}
-        {{--}--}}
     </script>
 
 @endsection
