@@ -9,11 +9,12 @@
 
     <article class="page-container">
         @if($node['id'])
-            <form action="{{route('admin.nodes.update',['nodes'=>$node['id']])}}" class="form form-horizontal">
+            <form action="{{route('admin.nodes.update',['nodes'=>$node['id']])}}" class="form form-horizontal"
+                  @submit.prevent='dopost'>
                 {{ method_field('PUT') }}
                 {{--{{ method_field('post') }}--}}
                 @else
-                    <form action="{{route('admin.nodes.store')}}" enctype="multipart/form-data"
+                    <form action="{{route('admin.nodes.store')}}" enctype="multipart/form-data" @submit.prevent='dopost'
                           class="form form-horizontal">
                         {{ method_field('post') }}
                         @endif
@@ -21,7 +22,7 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权限名称:</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" value="{{$node['node_name']}}" placeholder=""
+                                <input type="text" class="input-text" value="{{$node['node_name']}}" v-model.lazy="info.node_name" placeholder=""
                                        name="node_name">
                             </div>
                         </div>
@@ -29,7 +30,7 @@
                             <label class="form-label col-xs-4 col-sm-3">父级权限：</label>
                             <div class="formControls col-xs-8 col-sm-9">
                                  <span class="select-box" style="width:150px;">
-                                     <select class="select" name="pid" size="1">
+                                     <select class="select"   @change="changePid" size="1">
                                         <option value="0">作为顶级权限</option>
                                          @foreach($parents as $val)
                                              {{--{{str_repeat('----',$val->level)}}--}}
@@ -46,30 +47,30 @@
                                 @if($node['id'])
                                     @if($node['is_menu']=='是')
                                         <div class="radio-box">
-                                            <input name="is_menu" type="radio" value="1" checked>
+                                            <input name="is_menu" type="radio" value="1" v-model="info.is_menu" checked>
                                             <label for="is_nav-1">是</label>
                                         </div>
                                         <div class="radio-box">
-                                            <input type="radio" value="0" name="is_menu">
+                                            <input type="radio" value="0" name="is_menu" v-model="info.is_menu">
                                             <label for="is_nav-2">否</label>
                                         </div>
                                     @else
                                         <div class="radio-box">
-                                            <input name="is_menu" type="radio" value="1">
+                                            <input name="is_menu" type="radio" v-model="info.is_menu" value="1">
                                             <label for="is_nav-1">是</label>
                                         </div>
                                         <div class="radio-box">
-                                            <input type="radio" value="0" name="is_menu" checked>
+                                            <input type="radio" value="0" name="is_menu" v-model="info.is_menu" checked>
                                             <label for="is_nav-2">否</label>
                                         </div>
                                     @endif
                                 @else
                                     <div class="radio-box">
-                                        <input name="is_menu" type="radio" value="1" checked>
+                                        <input name="is_menu" type="radio" value="1" v-model="info.is_menu" checked>
                                         <label for="is_nav-1">是</label>
                                     </div>
                                     <div class="radio-box">
-                                        <input type="radio" value="0" name="is_menu">
+                                        <input type="radio" value="0" name="is_menu" v-model="info.is_menu">
                                         <label for="is_nav-2">否</label>
                                     </div>
                                 @endif
@@ -78,8 +79,8 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3">矢量图标：</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" placeholder=""  name="icon"
-                                       value="{!!$node['icon']!!}">
+                                <input type="text" class="input-text" placeholder=""  v-model="info.icon"  name="icon"
+                                      >
                             </div>
                         </div>
 
@@ -107,13 +108,61 @@
     <script type="text/javascript" src="/admin/lib/jquery.validation/1.14.0/messages_zh.js"></script>
     <script type="text/javascript" src="/js/vue.js"></script>
     <script type="text/javascript">
-        $('.skin-minimal input').iCheck({
-            checkboxClass: 'icheckbox-blue',
-            radioClass: 'iradio-blue',
-            increaseArea: '20%'
-        });
-        new Vue({
-            el:'.page-container'
+        // $('.skin-minimal input').iCheck({
+        //     checkboxClass: 'icheckbox-blue',
+        //     radioClass: 'iradio-blue',
+        //     increaseArea: '20%'
+        // });
+        var vim=new Vue({
+            el:'.page-container',
+            data:{
+                info:{
+                    _token:"{{csrf_token()}}",
+                    node_name:"{{$node['id']?$node['node_name']:''}}",
+                    pid:0,
+                    route_name:"{{$node['id']?$node['route_name']:''}}",
+                    icon:"{{$node['id']?str_replace(['-','amp;'],'', $node['icon']):''}}",
+                    is_menu:"{{$node['id']?(($node['is_menu']=='是')?'1':'0'):'1'}}",
+                }
+            },
+            methods:{
+                // dopost(event){
+                //     // console.log(this.info);
+                //     console.log(event.target.getAttribute('action'));
+                //     let url=event.target.getAttribute('action');
+                //
+                //     $.post(url,this.info).then(ret=>{
+                //         console.log(ret);
+                //     })
+                // },
+               async dopost(event){
+                    // console.log(this.info);
+                    console.log(event.target.getAttribute('action'));
+                    let url=event.target.getAttribute('action');
+                    let method=$('input[name=_method]').val()
+                    let ret=await $.ajax({url:url,data:this.info,type:method,dataType:'json'});
+                    // let  $.post(url,this.info);
+                    console.log(ret);
+                   if (ret.msg == 'Success') {
+                   layer.msg('{{$node['id']?'修改权限':'添加权限'}}成功!', {icon: 1, time: 2000}, function () {
+                   var index = parent.layer.getFrameIndex(window.name);
+                   // parent.$('.btn-refresh').click();
+                   parent.window.location = parent.window.location;
+                   parent.layer.close(index);
+                   });
+                   } else {
+                   parent.$('.btn-refresh').click();
+                   layer.msg(ret.msg, {icon: 2, time: 2000});
+                   // layer.msg(data.data, {icon: 2, time: 2000});
+                   }
+                },
+                //下拉列表
+                changePid(event){
+                    this.info.pid=event.target.value;
+                }
+            },
+
+
 
         });
         $(function () {
@@ -134,54 +183,54 @@
         });
 
 
-        $("form").validate({
-            rules: {
-                node_name: {
-                    required: true,
-                    minlength: 2,
+        {{--$("form").validate({--}}
+            {{--rules: {--}}
+                {{--node_name: {--}}
+                    {{--required: true,--}}
+                    {{--minlength: 2,--}}
 
-                },
-            },
-            message: {
-                node_name: {
-                    required: '角色名称必须写',
-                },
+                {{--},--}}
+            {{--},--}}
+            {{--message: {--}}
+                {{--node_name: {--}}
+                    {{--required: '角色名称必须写',--}}
+                {{--},--}}
 
-            },
-            onkeyup: false,
-            focusCleanup: true,
-            success: "valid",
-            submitHandler: function (form) {
-                // $(form).submit();
-                $(form).ajaxSubmit({
-                    // type: $('form').attr("method"),
-                    type: $('input[name=_method]').val(),
-                    url: $('form').attr("action"),
+            {{--},--}}
+            {{--onkeyup: false,--}}
+            {{--focusCleanup: true,--}}
+            {{--success: "valid",--}}
+            {{--submitHandler: function (form) {--}}
+                {{--// $(form).submit();--}}
+                {{--$(form).ajaxSubmit({--}}
+                    {{--// type: $('form').attr("method"),--}}
+                    {{--type: $('input[name=_method]').val(),--}}
+                    {{--url: $('form').attr("action"),--}}
 
-                    success: function (data) {
+                    {{--success: function (data) {--}}
 
-                        if (data.msg == 'Success') {
-                            layer.msg('{{$node['id']?'修改权限':'添加权限'}}成功!', {icon: 1, time: 2000}, function () {
-                                var index = parent.layer.getFrameIndex(window.name);
-                                // parent.$('.btn-refresh').click();
-                                parent.window.location = parent.window.location;
-                                parent.layer.close(index);
-                            });
-                        } else {
-                            parent.$('.btn-refresh').click();
-                            layer.msg(data.msg, {icon: 2, time: 2000});
-                            // layer.msg(data.data, {icon: 2, time: 2000});
-                        }
+                        {{--if (data.msg == 'Success') {--}}
+                            {{--layer.msg('{{$node['id']?'修改权限':'添加权限'}}成功!', {icon: 1, time: 2000}, function () {--}}
+                                {{--var index = parent.layer.getFrameIndex(window.name);--}}
+                                {{--// parent.$('.btn-refresh').click();--}}
+                                {{--parent.window.location = parent.window.location;--}}
+                                {{--parent.layer.close(index);--}}
+                            {{--});--}}
+                        {{--} else {--}}
+                            {{--parent.$('.btn-refresh').click();--}}
+                            {{--layer.msg(data.msg, {icon: 2, time: 2000});--}}
+                            {{--// layer.msg(data.data, {icon: 2, time: 2000});--}}
+                        {{--}--}}
 
-                    },
-                    error: function (XmlHttpRequest, textis_nav, errorThrown) {
-                        layer.msg('error!', {icon: 2, time: 1000});
-                    }
-                });
+                    {{--},--}}
+                    {{--error: function (XmlHttpRequest, textis_nav, errorThrown) {--}}
+                        {{--layer.msg('error!', {icon: 2, time: 1000});--}}
+                    {{--}--}}
+                {{--});--}}
 
-            }
+            {{--}--}}
 
-        });
+        {{--});--}}
     </script>
 
 @endsection

@@ -12,4 +12,9 @@ class Role extends Base
     //时间字段自动完成
     public $timestamps = false;
 
+    public function nodes(){
+
+        return $this->belongsToMany(Node::class,'roles_nodes','role_id','node_id');
+    }
+
 }

@@ -10,19 +10,25 @@ class NodeController extends BaseController
 {
     /**
      * Display a listing of the resource.
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
         $params = $request->get('node_name', '');
 
+        if ($params != '') {
+            $data = Node::when($params, function ($query) use ($params) {
 
-        $data = Node::when($params, function ($query) use ($params) {
+                $query->where('node_name', 'like', "%{$params}%");
+            })->paginate($this->pagesize);
+        } else {
+            $data = getTree(Node::when($params, function ($query) use ($params) {
 
-            $query->where('node_name', 'like', "%{$params}%");
-        })->paginate($this->pagesize);
+                $query->where('node_name', 'like', "%{$params}%");
+            })->paginate($this->pagesize));
 
+        }
 
         return view('admin.node.index', compact('data', 'params'));
 
@@ -31,30 +37,41 @@ class NodeController extends BaseController
 
     /**
      * Show the form for creating a new resource.
-     * @param  \App\Models\Node  $node
+     * @param  \App\Models\Node $node
      * @return \Illuminate\Http\Response
      */
     public function create(Node $node)
     {
-        $parents=Node::get();
-        return view('admin.node.create_edit',compact('node','parents'));
+        $parents = getTree(Node::get());
+        return view('admin.node.create_edit', compact('node', 'parents'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->except(['_token', '_method']);
+        $validator = Validator::make($data, [
+            'node_name' => ["required", "unique:nodes"],
+//            'icon' => ["regex:/^[$]|^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/"],
+            'pid' => ["required", 'integer'],
+            'is_menu' => ["required", 'integer'],
+        ]);
+        if ($validator->fails()) {
+            return $this->error_msg($validator->errors()->first());
+        }
+        return $request->all();
+//        dd($request->all());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Node  $node
+     * @param  \App\Models\Node $node
      * @return \Illuminate\Http\Response
      */
     public function show(Node $node)
@@ -65,32 +82,33 @@ class NodeController extends BaseController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Node  $node
+     * @param  \App\Models\Node $node
      * @return \Illuminate\Http\Response
      */
     public function edit(Node $node)
     {
-        $parents=Node::get();
+        $parents = Node::get();
 
-       return view('admin.node.create_edit',compact('node','parents'));
+        return view('admin.node.create_edit', compact('node', 'parents'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Node  $node
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\Node $node
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Node $node)
     {
-        $data=$request->except(['_token','_method']);
+        $data = $request->except(['_token', '_method']);
+
 
         $validator = Validator::make($data, [
             'node_name' => ["required", "unique:nodes,node_name,$node->id,id"],
 //            'icon' => ["regex:/^[$]|^[a-zA-Z0-9\W_!@#$%^&*`~()-+=]{6,16}$/"],
-            'pid' => ["required",'integer'],
-            'is_menu' => ["required",'integer'],
+            'pid' => ["required", 'integer'],
+            'is_menu' => ["required", 'integer'],
         ]);
 
 
@@ -99,11 +117,11 @@ class NodeController extends BaseController
         }
 
 
-        $result=$node->update($data);
-        if($result){
-            return   $this->success_msg();
-        }else{
-            return  $this->error_msg('更新失败');
+        $result = $node->update($data);
+        if ($result) {
+            return $this->success_msg();
+        } else {
+            return $this->error_msg('更新失败');
         }
 
     }
@@ -111,12 +129,12 @@ class NodeController extends BaseController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Node  $node
+     * @param  \App\Models\Node $node
      * @return \Illuminate\Http\Response
      */
     public function destroy(Node $node)
     {
-        $result=$node->delete();
+        $result = $node->delete();
 //        Node::onlyTrashed()->where('id',1)->restore();
         $node->onlyTrashed()->restore();
 //        Node::find($id)->forceDelete();

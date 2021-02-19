@@ -12,9 +12,9 @@ class Node extends Base
     public $timestamps = false;
 
     // 是否是菜单
-    public function getIsMenuAttribute($value)
+    public function getMenuAttribute()
     {
-            return $value? $this->attributes['is_menu'] = '是':$this->attributes['is_menu'] = '否';
+            return $this->is_menu?'<span  class="label label-success radius">是</span>':'<span  class="label label-danger radius">否</span>';
 
 
     }
@@ -39,4 +39,14 @@ class Node extends Base
             return $this->attributes['route_name']=$value;
         }
     }
+    public function setIconAttribute($value)
+    {
+       return $this->attributes['icon']=empty($value)?'':htmlspecialchars($value);
+    }
+
+    public function roles(){
+
+        return $this->belongsToMany(Role::class,'roles_nodes','node_id','role_id');
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Node;
 use App\Models\Role;
 use function foo\func;
 use Illuminate\Http\Request;
@@ -37,8 +38,8 @@ class RoleController extends BaseController
      */
     public function create(Role $role)
     {
-
-        return view('admin.role.create_edit', compact('role'));
+        $node=getChild(Node::get()->toArray());
+        return view('admin.role.create_edit', compact('node','role'));
     }
 
     /**
@@ -53,6 +54,7 @@ class RoleController extends BaseController
         $validator = Validator::make($data, [
             'role_name' => ["required", "unique:roles"],
         ]);
+
 //        dd($validator->errors()->first());
         if ($validator->fails()) {
             return $this->error_msg($validator->errors()->first());
@@ -75,7 +77,16 @@ class RoleController extends BaseController
      */
     public function show(Role $role)
     {
-        dd($role);
+        //所有的权限
+        $nodes=getChild(Node::get()->toArray());
+        //当前角色拥有的权限
+        $node=$role->nodes()->pluck('id')->toArray();
+//        dd($node);
+//dd();
+
+        return view('admin.role.show',compact('nodes','node','role'));
+       
+
     }
 
     /**
@@ -86,8 +97,8 @@ class RoleController extends BaseController
      */
     public function edit(Role $role)
     {
-
-        return view('admin.role.create_edit', compact('role'));
+        $node=getChild(Node::get()->toArray());
+        return view('admin.role.create_edit', compact('node','role'));
     }
 
     /**
@@ -136,6 +147,23 @@ class RoleController extends BaseController
         return $this->success_msg();
 
 
+
+    }
+
+
+    public function assign(Request $request,Role $role){
+
+
+        $node_id=$request->get('node_id');
+//dd($node_id);
+        if (isset($node_id)){
+            $role->nodes()->sync($request->get('node_id'));
+
+            return $this->success_msg();
+
+        }else{
+            return $this->error_msg('请至少选择一个权限');
+        }
 
     }
 }

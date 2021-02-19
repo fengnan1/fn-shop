@@ -75,11 +75,16 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         Route::post('managers/restores/{id}', 'ManagerController@restores')->name('managers.restores');
         //全选删除
         Route::delete('managers/patch_delete', 'ManagerController@patch_delete')->name('managers.patch_delete');
+        //分配角色
+        Route::post('managers/assign/{id}','ManagerController@assign')->name('managers.assign');
+
         //管理员资源
         Route::resource('managers', 'ManagerController');
 
         //角色资源
         Route::resource('roles', 'RoleController');
+        //分配权限
+        Route::post('roles/assign/{role}', 'RoleController@assign')->name('roles.assign');
 
         //权限资源
         Route::resource('nodes', 'NodeController');

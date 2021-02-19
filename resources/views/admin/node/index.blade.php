@@ -44,10 +44,10 @@
                 <tr class="text-c">
                     <td><input type="checkbox" value="" name=""></td>
                     <td>{{$val['id']}}</td>
-                    <td>{{$val['node_name']}}</td>
+                    <td class="text-l">{{str_repeat('--',$val['level']*2)}}{{$val['node_name']}}</td>
                     <td>{{$val['route_name']}}</td>
-                    <td>{{$val['is_menu']}}</td>
-                    <td><i class="Hui-iconfont" style="font-size:18px">{{str_replace('-','',$val['icon'])}}</i></td>
+                    <td>{!! $val['menu']!!}</td>
+                    <td><i class="Hui-iconfont" style="font-size:18px">{!! str_replace(['-','amp;'],'', $val['icon'])!!}</i></td>
                     <td class="f-14">
                         <a class=" label label-success radius show"  href="javascript:;"
                            data-url="{{route('admin.nodes.show',['nodes'=>$val['id']])}}"

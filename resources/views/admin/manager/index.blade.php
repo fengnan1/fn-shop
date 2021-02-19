@@ -81,33 +81,34 @@
                                 @endif
                             </td>
                             <td class="td-manage">
-                                @if($val['status']=='1')
-                                    <a style="text-decoration:none"
-                                       data-url="{{route('admin.managers.edit_status',['managers'=>$val['id']])}}"
-                                       href="javascript:;" class="label label-danger radius edit_status">停用</a>
-                                @else
-                                    <a style="text-decoration:none"
-                                       data-url="{{route('admin.managers.edit_status',['managers'=>$val['id']])}}"
-                                       href="javascript:;" class="label label-success radius  edit_status">启用</a>
-                                @endif
-                                <a style="text-decoration:none" class="label label-primary  radius show"
-                                   data-url="{{route('admin.managers.show',['managers'=>$val['id']])}}"
-                                   data-title="查看管理员"
-                                   {{--data-type="full"--}}
-                                   href="javascript:;"
-                                >查看</a>
-                                <a style="text-decoration:none" class="label label-warning  radius edit"
-                                   data-url="{{route('admin.managers.edit',['managers'=>$val['id']])}}"
-                                   data-title="修改管理员"
-                                   {{--data-type="full"--}}
-                                   href="javascript:;"
-                                >修改</a>
+
                                 @if(auth('admin')->id()!=$val['id'])
                                     @if($val['deleted_at']!=null)
                                         <a style="text-decoration:none" class="label label-secondary  radius delete"
                                            data-url="{{route('admin.managers.restores',['managers'=>$val['id']])}}"
                                            href="javascript:;">恢复</a>
                                     @else
+                                        @if($val['status']=='1')
+                                            <a style="text-decoration:none"
+                                               data-url="{{route('admin.managers.edit_status',['managers'=>$val['id']])}}"
+                                               href="javascript:;" class="label label-danger radius edit_status">停用</a>
+                                        @else
+                                            <a style="text-decoration:none"
+                                               data-url="{{route('admin.managers.edit_status',['managers'=>$val['id']])}}"
+                                               href="javascript:;" class="label label-success radius  edit_status">启用</a>
+                                        @endif
+                                        <a style="text-decoration:none" class="label label-primary  radius show"
+                                           data-url="{{route('admin.managers.show',['managers'=>$val['id']])}}"
+                                           data-title="分配角色"
+                                           {{--data-type="full"--}}
+                                           href="javascript:;"
+                                        >分配角色</a>
+                                        <a style="text-decoration:none" class="label label-warning  radius edit"
+                                           data-url="{{route('admin.managers.edit',['managers'=>$val['id']])}}"
+                                           data-title="修改管理员"
+                                           {{--data-type="full"--}}
+                                           href="javascript:;"
+                                        >修改</a>
                                         <a style="text-decoration:none" class="label label-danger  radius delete"
                                            data-url="{{route('admin.managers.destroy',['managers'=>$val['id']])}}"
                                            href="javascript:;">删除</a>

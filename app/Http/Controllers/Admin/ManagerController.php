@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Manager;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Validator;
 use Mail;
@@ -85,7 +86,10 @@ class ManagerController extends BaseController
      */
     public function show($id)
     {
-        return view('admin.manager.show');
+        $manager=Manager::find($id);
+
+        $role=Role::all();
+        return view('admin.manager.show',compact('manager','role'));
     }
 
     /**
@@ -222,4 +226,19 @@ class ManagerController extends BaseController
         }
     }
 
+
+    public function assign(Request $request,$id)
+    {
+        dd($id);
+        $role_id = $request->get('role_id');
+
+        if (isset($role_id)) {
+            Manager::where('id', $id)->update(['role_id' => $role_id]);
+
+            return $this->success_msg();
+        } else {
+            return $this->error_msg('必须选择一个角色！');
+        }
+
+    }
 }

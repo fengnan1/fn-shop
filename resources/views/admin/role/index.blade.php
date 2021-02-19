@@ -50,9 +50,9 @@
                     <td class="f-14">
                         <a class=" label label-success radius show"  href="javascript:;"
                            data-url="{{route('admin.roles.show',['roles'=>$val['id']])}}"
-                           data-title="查看权限"
+                           data-title="分配权限"
                            {{--data-type="full"--}}
-                           style="text-decoration:none">点击查看
+                           style="text-decoration:none">分配权限
                         </a>
                     </td>
                     <td>
