@@ -68,7 +68,7 @@
                             <td>{{$val['id']}}</td>
                             <td class="text-l">{{$val['username']}}</td>
                             <td class="text-l">{{$val['truename']}}</td>
-                            <td class="text-l">{{$val->role->role_name}}</td>
+                            <td class="text-l">{{($val['id']!=1)?$val['role']['role_name']:'超级管理员'}}</td>
                             <td class="text-l">{{$val['gender']}}</td>
                             <td>{{$val['mobile']}}</td>
                             <td>{{$val['email']}}</td>

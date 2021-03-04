@@ -44,7 +44,7 @@
 <script type="text/javascript" src="/admin/lib/ueditor/1.4.3/ueditor.all.min.js"></script>
 <script type="text/javascript" src="/admin/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
 <script type="text/javascript" src="/admin/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/admin/lib/laypage/1.2/laypage.js"></script>
+{{--<script type="text/javascript" src="/admin/lib/laypage/1.2/laypage.js"></script>--}}
 <!--/_footer 作为公共模版分离出去-->
 
 @yield('js')

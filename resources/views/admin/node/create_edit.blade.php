@@ -34,7 +34,7 @@
                                         <option value="0">作为顶级权限</option>
                                          @foreach($parents as $val)
                                              {{--{{str_repeat('----',$val->level)}}--}}
-                                             <option value="{{$val['id']}}">{{$val['node_name']}}</option>
+                                             <option value="{{$val['id']}}" @if($node['id']&&$node['pid']==$val['id'])selected style="color: red" @endif>{{str_repeat('----',$val['level'])}}{{$val['node_name']}}</option>
                                          @endforeach
 
                                      </select>
@@ -79,7 +79,7 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3">矢量图标：</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" placeholder=""  v-model="info.icon"  name="icon"
+                                <input type="text" class="input-text" placeholder=""  v-model="info.icon" id="icon" name="icon"
                                       >
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                         <div class="row cl">
                             <label class="form-label col-xs-4 col-sm-3">路由别名：</label>
                             <div class="formControls col-xs-8 col-sm-9">
-                                <input type="text" class="input-text" value="{{$node['route_name']}}" placeholder=""
+                                <input type="text" class="input-text" v-model="info.route_name" placeholder=""
                                        id="route_name"
                                        name="route_name">
                             </div>
@@ -95,7 +95,7 @@
 
                         <div class="row cl">
                             <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-                                <input class="btn btn-primary radius" type="submit" value="提交">
+                                <input class="btn btn-primary radius" type="submit" value="{{$node['id']?'修改权限':'添加权限'}}">
                             </div>
                         </div>
                     </form>
@@ -119,7 +119,7 @@
                 info:{
                     _token:"{{csrf_token()}}",
                     node_name:"{{$node['id']?$node['node_name']:''}}",
-                    pid:0,
+                    pid:"{{$node['id']?$node['pid']:0}}",
                     route_name:"{{$node['id']?$node['route_name']:''}}",
                     icon:"{{$node['id']?str_replace(['-','amp;'],'', $node['icon']):''}}",
                     is_menu:"{{$node['id']?(($node['is_menu']=='是')?'1':'0'):'1'}}",
@@ -137,12 +137,12 @@
                 // },
                async dopost(event){
                     // console.log(this.info);
-                    console.log(event.target.getAttribute('action'));
+                    // console.log(event.target.getAttribute('action'));
                     let url=event.target.getAttribute('action');
                     let method=$('input[name=_method]').val()
                     let ret=await $.ajax({url:url,data:this.info,type:method,dataType:'json'});
                     // let  $.post(url,this.info);
-                    console.log(ret);
+                    // console.log(ret);
                    if (ret.msg == 'Success') {
                    layer.msg('{{$node['id']?'修改权限':'添加权限'}}成功!', {icon: 1, time: 2000}, function () {
                    var index = parent.layer.getFrameIndex(window.name);
@@ -169,6 +169,14 @@
             //初始化默认隐藏
             $('#route_name').parents('.row').hide();
 
+           var va=$('select option:selected').val();
+            if (va != 0) {
+                $('#route_name').parents('.row').show(300);
+                $('#icon').parents('.row').hide();
+            } else {
+                $('#route_name').parents('.row').hide();
+                $('#icon').parents('.row').show(300);
+            }
             $('select').change(function () {
                 var val = $(this).val();
                 // $('#icon,#route_name').val('');
@@ -182,55 +190,6 @@
             })
         });
 
-
-        {{--$("form").validate({--}}
-            {{--rules: {--}}
-                {{--node_name: {--}}
-                    {{--required: true,--}}
-                    {{--minlength: 2,--}}
-
-                {{--},--}}
-            {{--},--}}
-            {{--message: {--}}
-                {{--node_name: {--}}
-                    {{--required: '角色名称必须写',--}}
-                {{--},--}}
-
-            {{--},--}}
-            {{--onkeyup: false,--}}
-            {{--focusCleanup: true,--}}
-            {{--success: "valid",--}}
-            {{--submitHandler: function (form) {--}}
-                {{--// $(form).submit();--}}
-                {{--$(form).ajaxSubmit({--}}
-                    {{--// type: $('form').attr("method"),--}}
-                    {{--type: $('input[name=_method]').val(),--}}
-                    {{--url: $('form').attr("action"),--}}
-
-                    {{--success: function (data) {--}}
-
-                        {{--if (data.msg == 'Success') {--}}
-                            {{--layer.msg('{{$node['id']?'修改权限':'添加权限'}}成功!', {icon: 1, time: 2000}, function () {--}}
-                                {{--var index = parent.layer.getFrameIndex(window.name);--}}
-                                {{--// parent.$('.btn-refresh').click();--}}
-                                {{--parent.window.location = parent.window.location;--}}
-                                {{--parent.layer.close(index);--}}
-                            {{--});--}}
-                        {{--} else {--}}
-                            {{--parent.$('.btn-refresh').click();--}}
-                            {{--layer.msg(data.msg, {icon: 2, time: 2000});--}}
-                            {{--// layer.msg(data.data, {icon: 2, time: 2000});--}}
-                        {{--}--}}
-
-                    {{--},--}}
-                    {{--error: function (XmlHttpRequest, textis_nav, errorThrown) {--}}
-                        {{--layer.msg('error!', {icon: 2, time: 1000});--}}
-                    {{--}--}}
-                {{--});--}}
-
-            {{--}--}}
-
-        {{--});--}}
     </script>
 
 @endsection

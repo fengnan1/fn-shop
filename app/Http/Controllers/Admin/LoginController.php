@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Auth;
+use App\Models\Node;
 class LoginController extends Controller
 {
   public function  login(Request $request){
@@ -22,6 +22,20 @@ class LoginController extends Controller
           $bool=auth('admin')->attempt($data);
 
           if ($bool){
+                //判断是否是超级管理员
+              if (auth('admin')->user()->username ===config('rbac.super')) {
+
+                  $auth=getChild(Node::get()->toArray());
+
+              } else {
+                  //获取该用户拥有的权限
+                  $node = auth('admin')->user()->role->nodes()->pluck('route_name', 'id')->toArray();
+                  $auth =getChild(Node::whereIn('id', array_keys($node))->get()->toArray());
+                  session(['admin.node'=>$node]);
+
+
+              }
+              session(['admin.auth'=>$auth]);
               return redirect(route('admin.index'))->with(['success'=>'登陆成功']);
 
           }else{

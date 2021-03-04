@@ -64,7 +64,9 @@ class NodeController extends BaseController
         if ($validator->fails()) {
             return $this->error_msg($validator->errors()->first());
         }
-        return $request->all();
+        $result=Node::create($data);
+        return $this->success_msg();
+//        return $request->all();
 //        dd($request->all());
     }
 
@@ -87,8 +89,7 @@ class NodeController extends BaseController
      */
     public function edit(Node $node)
     {
-        $parents = Node::get();
-
+        $parents = getTree(Node::get()->toArray());
         return view('admin.node.create_edit', compact('node', 'parents'));
     }
 

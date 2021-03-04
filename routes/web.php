@@ -92,7 +92,19 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'as' => 'admin.'], fu
         //商品资源
         Route::resource('goods', 'GoodsController');
 
+        //文章资源
+        Route::post('articles/uploads','ArticleController@uploads')->name('articles.uploads');
+        Route::resource('articles', 'ArticleController');
 
+
+        //图片管理
+        Route::resource('pictures', 'PictureController');
+        //会员
+        Route::resource('members', 'MemberController');
+        //商品类型
+        Route::resource('types', 'TypeController');
+        //评论资源
+        Route::resource('comments', 'CommentController');
     });
 
 

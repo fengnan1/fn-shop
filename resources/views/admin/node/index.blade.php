@@ -49,25 +49,11 @@
                     <td>{!! $val['menu']!!}</td>
                     <td><i class="Hui-iconfont" style="font-size:18px">{!! str_replace(['-','amp;'],'', $val['icon'])!!}</i></td>
                     <td class="f-14">
-                        <a class=" label label-success radius show"  href="javascript:;"
-                           data-url="{{route('admin.nodes.show',['nodes'=>$val['id']])}}"
-                           data-title="查看权限"
-                           {{--data-type="full"--}}
-                           style="text-decoration:none">点击查看
-                        </a>
-                        <a class=" btn btn-warning radius edit"  href="javascript:;"
-                           data-url="{{route('admin.nodes.edit',['nodes'=>$val['id']])}}"
-                           data-title="修改角色"
-                           {{--data-type="full"--}}
-                           style="text-decoration:none">修改
-                        </a>
+                        {!!  $val->showBtn('admin.nodes.show')!!}
+                        {!! $val->editBtn('admin.nodes.edit') !!}
+                        {!! $val->delBtn('admin.nodes.destroy') !!}
                         {{csrf_field()}}
-                        <a class=" btn btn-danger radius delete"  href="javascript:;"
-                           data-url="{{route('admin.nodes.destroy',['nodes'=>$val['id']])}}"
-                           data-title="删除角色"
-                           {{--data-type="full"--}}
-                           style="text-decoration:none">删除
-                        </a>
+
                     </td>
                 </tr>
             @endforeach
